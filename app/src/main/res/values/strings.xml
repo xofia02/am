@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">AM</string>
+    <string name="parte_1">Parte 1</string>
+    <string name="dados_da_ltima_posi_o">Dados da Última Posição</string>
+    <string name="dados_do_sistema_gnss">Dados do Sistema GNSS</string>
+    <string name="dados_da_ltima_posi_oo">Dados da Última Posição</string>
+    <string name="dados_do_sistema_gnsss">Dados do Sistema GNSS</string>
+    <string name="dados_da_ltima_posi_ooo">Dados da Última Posição</string>
+    <string name="dados_da_ltimaa_posi_o">Dados da Última Posição</string>
+    <string name="DUP">Dados da Última Posição</string>
+    <string name="DSG">Dados do Sistema GNSS</string>
+    <string name="DSGNSS">Dados do Sistema GNSS</string>
+    <string name="DUPos">Dados da Última Posição</string>
+    <string name="dados">Dados do Sistema GNSS</string>
+    <string name="dp">Dados da Última Posição</string>
+</resources>
