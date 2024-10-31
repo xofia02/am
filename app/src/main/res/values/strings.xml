@@ -13,4 +13,7 @@
     <string name="DUPos">Dados da Última Posição</string>
     <string name="dados">Dados do Sistema GNSS</string>
     <string name="dp">Dados da Última Posição</string>
+    <string name="parte_2">part2</string>
+    <string name="parte_3">Parte 3\n</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

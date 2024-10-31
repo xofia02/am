@@ -1,6 +1,7 @@
 package com.example.am;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.GnssStatus;
 import android.location.Location;
@@ -10,15 +11,17 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 public class LocationManagerActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private CustomLocationProvider locationProvider;
-    private GNSSView gnssView; // Referência à view GNSS
+    private GNSSView gnssView;
     private TextView tvGnssInfo;
     private static final int REQUEST_LOCATION = 1;
+    private String coordinateFormat = "Graus"; // Formato padrão
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +30,22 @@ public class LocationManagerActivity extends AppCompatActivity {
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         gnssView = findViewById(R.id.gnssView);
-        tvGnssInfo = findViewById(R.id.tv_gnssInfo); // Inicializando a view dos dados GNSS
+        tvGnssInfo = findViewById(R.id.tv_gnssInfo);
         obtemLocationProvider_Permission();
+
+        gnssView.setOnClickListener(v -> showCoordinateFormatDialog());
+    }
+
+    private void showCoordinateFormatDialog() {
+        // Diálogo para escolher o formato das coordenadas
+        String[] formats = {"Graus", "Graus-Minutos", "Graus-Minutos-Segundos"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Escolha o Formato das Coordenadas");
+        builder.setItems(formats, (dialog, which) -> {
+            coordinateFormat = formats[which];
+            Toast.makeText(this, "Formato escolhido: " + coordinateFormat, Toast.LENGTH_SHORT).show();
+        });
+        builder.show();
     }
 
     public void obtemLocationProvider_Permission() {
@@ -81,29 +98,37 @@ public class LocationManagerActivity extends AppCompatActivity {
         });
     }
 
-    // Exibindo os dados de localização
     public void mostraLocation(Location location) {
         TextView textView = findViewById(R.id.textviewLocation_id);
         String mens = "Dados da Última Posição\n";
         if (location != null) {
-            mens += "Latitude(graus)=" +
-                    Location.convert(location.getLatitude(), Location.FORMAT_SECONDS) + "\n" +
-                    "Longitude(graus)=" +
-                    Location.convert(location.getLongitude(), Location.FORMAT_SECONDS) + "\n" +
-                    "Velocidade(m/s)=" + location.getSpeed() + "\n" +
-                    "Rumo(graus)=" + location.getBearing();
+            mens += "Latitude=" + convertCoordinates(location.getLatitude()) + "\n" +
+                    "Longitude=" + convertCoordinates(location.getLongitude()) + "\n" +
+                    "Velocidade=" + location.getSpeed() + " m/s\n" +
+                    "Rumo=" + location.getBearing() + "°";
         } else {
             mens += "Localização Não disponível";
         }
         textView.setText(mens);
     }
 
-    // Exibindo os dados do sistema GNSS
+    private String convertCoordinates(double coordinate) {
+        // Conversão do formato de coordenadas
+        switch (coordinateFormat) {
+            case "Graus":
+                return Location.convert(coordinate, Location.FORMAT_DEGREES);
+            case "Graus-Minutos":
+                return Location.convert(coordinate, Location.FORMAT_MINUTES);
+            case "Graus-Minutos-Segundos":
+                return Location.convert(coordinate, Location.FORMAT_SECONDS);
+            default:
+                return String.valueOf(coordinate);
+        }
+    }
+
     public void mostraGNSS(GnssStatus status) {
-        // Atualizando a GNSSView
         gnssView.setGnssStatus(status);
 
-        // Atualizando as informações de satélites no TextView
         StringBuilder mens = new StringBuilder("Dados do Sistema GNSS\n");
         if (status != null) {
             mens.append("Número de Satélites: ").append(status.getSatelliteCount()).append("\n");

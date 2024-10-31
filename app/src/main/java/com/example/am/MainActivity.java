@@ -18,5 +18,12 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LocationManagerActivity.class);
             startActivity(intent);
         });
+        // Botão para abrir a MapsActivity
+        Button btnOpenMapsActivity = findViewById(R.id.Parte2); // Usando o ID "Parte2"
+        btnOpenMapsActivity.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+            startActivity(intent);
+        });
     }
 }
+
