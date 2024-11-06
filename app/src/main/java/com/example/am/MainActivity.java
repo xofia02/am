@@ -2,10 +2,11 @@ package com.example.am;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,8 +19,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, LocationManagerActivity.class);
             startActivity(intent);
         });
+
         // Botão para abrir a MapsActivity
-        Button btnOpenMapsActivity = findViewById(R.id.Parte2); // Usando o ID "Parte2"
+        Button btnOpenMapsActivity = findViewById(R.id.map_button); // Usando o ID "Parte2"
         btnOpenMapsActivity.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
             startActivity(intent);
