@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Botão para abrir a LocationManagerActivity
-        Button btnOpenLocationManager = findViewById(R.id.OpenLocationManager);
+        Button btnOpenLocationManager = findViewById(R.id.Parte1);
         btnOpenLocationManager.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LocationManagerActivity.class);
             startActivity(intent);
@@ -26,4 +26,3 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-

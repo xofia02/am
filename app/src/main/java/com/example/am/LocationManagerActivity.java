@@ -20,6 +20,7 @@ public class LocationManagerActivity extends AppCompatActivity {
     private CustomLocationProvider locationProvider;
     private GNSSView gnssView;
     private TextView tvGnssInfo;
+    private TextView tvLocation;
     private static final int REQUEST_LOCATION = 1;
     private String coordinateFormat = "Graus"; // Formato padrão
 
@@ -31,9 +32,12 @@ public class LocationManagerActivity extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         gnssView = findViewById(R.id.gnssView);
         tvGnssInfo = findViewById(R.id.tv_gnssInfo);
+        tvLocation = findViewById(R.id.textviewLocation_id); // Referência ao TextView de localização
+
         obtemLocationProvider_Permission();
 
-        gnssView.setOnClickListener(v -> showCoordinateFormatDialog());
+        // Configura o ouvinte de clique no TextView de localização
+        tvLocation.setOnClickListener(v -> showCoordinateFormatDialog());
     }
 
     private void showCoordinateFormatDialog() {
@@ -44,6 +48,8 @@ public class LocationManagerActivity extends AppCompatActivity {
         builder.setItems(formats, (dialog, which) -> {
             coordinateFormat = formats[which];
             Toast.makeText(this, "Formato escolhido: " + coordinateFormat, Toast.LENGTH_SHORT).show();
+            // Atualiza a posição com o novo formato escolhido
+            updateLocationDisplay();
         });
         builder.show();
     }
@@ -99,7 +105,6 @@ public class LocationManagerActivity extends AppCompatActivity {
     }
 
     public void mostraLocation(Location location) {
-        TextView textView = findViewById(R.id.textviewLocation_id);
         String mens = "Dados da Última Posição\n";
         if (location != null) {
             mens += "Latitude=" + convertCoordinates(location.getLatitude()) + "\n" +
@@ -109,7 +114,7 @@ public class LocationManagerActivity extends AppCompatActivity {
         } else {
             mens += "Localização Não disponível";
         }
-        textView.setText(mens);
+        tvLocation.setText(mens);
     }
 
     private String convertCoordinates(double coordinate) {
@@ -125,23 +130,55 @@ public class LocationManagerActivity extends AppCompatActivity {
                 return String.valueOf(coordinate);
         }
     }
-
+    private String getConstellationType(int constellationType) {
+        switch (constellationType) {
+            case GnssStatus.CONSTELLATION_GPS:
+                return "GPS";
+            case GnssStatus.CONSTELLATION_GLONASS:
+                return "GLONASS";
+            case GnssStatus.CONSTELLATION_BEIDOU:
+                return "BEIDOU";
+            case GnssStatus.CONSTELLATION_GALILEO:
+                return "Galileo";
+            case GnssStatus.CONSTELLATION_QZSS:
+                return "QZSS";
+            default:
+                return "Desconhecido";
+        }
+    }
     public void mostraGNSS(GnssStatus status) {
         gnssView.setGnssStatus(status);
 
         StringBuilder mens = new StringBuilder("Dados do Sistema GNSS\n");
         if (status != null) {
-            mens.append("Número de Satélites: ").append(status.getSatelliteCount()).append("\n");
+            mens.append("Número de Satélites: ").append(status.getSatelliteCount()).append("\n\n");
             for (int i = 0; i < status.getSatelliteCount(); i++) {
-                mens.append("SVID=").append(status.getSvid(i))
-                        .append(" - Tipo=").append(status.getConstellationType(i))
-                        .append(" Azimute=").append(status.getAzimuthDegrees(i))
-                        .append(" Elevação=").append(status.getElevationDegrees(i))
-                        .append(" | ");
+                // SVID
+                mens.append("SVID: ").append(status.getSvid(i)).append("\n");
+
+                // Tipo de constelação
+                mens.append("Tipo de Constelação: ").append(getConstellationType(status.getConstellationType(i))).append("\n");
+
+                // Azimute
+                mens.append("Azimute: ").append(status.getAzimuthDegrees(i)).append("°\n");
+
+                // Elevação
+                mens.append("Elevação: ").append(status.getElevationDegrees(i)).append("°\n");
+
+                // Adiciona uma linha em branco entre os satélites para separá-los
+                mens.append("\n");
             }
         } else {
             mens.append("GNSS Não disponível");
         }
         tvGnssInfo.setText(mens.toString());
+    }
+
+    // Atualiza a exibição das coordenadas formatadas
+    private void updateLocationDisplay() {
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location != null) {
+            mostraLocation(location);
+        }
     }
 }
